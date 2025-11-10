@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import myPhoto from "../images/dera-web.png";
-import mobile from "../images/dera-mobile.png";
+import myPhoto from "../images/dera-mobile.webp";
+import mobile from "../images/dera-mobile.webp";
 import ScrollReveal from "scrollreveal";
 
 const Accueil = () => {

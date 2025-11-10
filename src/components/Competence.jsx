@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import photo from "../images/photo.png";
 import gsap from "gsap"; // Import GSAP if installed via npm
 import ScrollReveal from "scrollreveal";
+import cv from "../../public/cv.pdf";
 
 const Competence = () => {
   const buttonRef = useRef(null);
