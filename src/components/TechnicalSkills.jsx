@@ -72,7 +72,10 @@ const TechnicalSkills = () => {
             skills: [
                 'MySQL',
                 'PostgreSQL',
-                'MS Access'
+                'MS Access',
+                'MongoDB',
+                'Firebase',
+                'Supabase'
             ]
         },
         {

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -13,6 +13,8 @@ import {
   FaDatabase,
   FaJs,
   FaCss3Alt,
+  FaHeart,
+  FaRegHeart,
 } from "react-icons/fa";
 import {
   SiTailwindcss,
@@ -33,6 +35,8 @@ import {
   SiSupabase,
   SiExpress,
 } from "react-icons/si";
+import { database } from "../firebase";
+import { ref, onValue, runTransaction } from "firebase/database";
 
 import sary1 from "../images/sirius.webp";
 import sary2 from "../images/pro.jpg";
@@ -196,6 +200,71 @@ const Projet = () => {
   const scrollRef = useRef();
   const pinSection = useRef();
 
+  const [likes, setLikes] = useState({});
+  const [likedProjects, setLikedProjects] = useState([]);
+
+  useEffect(() => {
+    const localLikes = localStorage.getItem("liked_projects");
+    if (localLikes) {
+      try {
+        setLikedProjects(JSON.parse(localLikes));
+      } catch (e) {
+        console.error("Error parsing liked projects from localStorage", e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const likesRef = ref(database, "likes");
+    const unsubscribe = onValue(likesRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setLikes(data);
+      } else {
+        setLikes({});
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleLike = async (projectId, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    const localLikes = localStorage.getItem("liked_projects");
+    let likedList = [];
+    if (localLikes) {
+      try {
+        likedList = JSON.parse(localLikes);
+      } catch (err) {
+        likedList = [];
+      }
+    }
+
+    if (likedList.includes(projectId)) {
+      return;
+    }
+
+    const newLikedList = [...likedList, projectId];
+    setLikedProjects(newLikedList);
+    localStorage.setItem("liked_projects", JSON.stringify(newLikedList));
+
+    const projectLikeRef = ref(database, `likes/${projectId}`);
+    try {
+      await runTransaction(projectLikeRef, (currentValue) => {
+        return (currentValue || 0) + 1;
+      });
+    } catch (error) {
+      console.error("Error updating like transaction", error);
+      const rolledBackList = likedList.filter((id) => id !== projectId);
+      setLikedProjects(rolledBackList);
+      localStorage.setItem("liked_projects", JSON.stringify(rolledBackList));
+    }
+  };
+
   useEffect(() => {
     const scrollElem = scrollRef.current;
     if (!scrollElem) return;
@@ -260,116 +329,87 @@ const Projet = () => {
         >
           {projects.map((project) => (
             <Card key={project.id} className="project-card group relative overflow-hidden">
-              {project.link ? (
+              {/* Lien overlay absolu (uniquement si le projet a un lien externe) */}
+              {project.link && (
                 <a
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block w-full h-full cursor-pointer"
-                >
-                  {/* Content Wrapper */}
-                  <div className="relative z-10 w-full h-full flex flex-col justify-between">
-                    {/* Technology Badges */}
-                    <div className="flex gap-2 justify-between ">
-                      <div className="flex gap-2 flex-wrap">
-                        {project.techIcons.map(({ Icon, color }, index) => (
-                          <TechBadge
-                            key={index}
-                            Icon={(props) => <Icon {...props} style={{ color }} />}
-                          />
-                        ))}
-                      </div>
+                  className="absolute inset-0 z-10 cursor-pointer"
+                  aria-label={`Visiter ${project.name}`}
+                />
+              )}
 
-                      <div className="">
-                        <h1 className="text-xs md:text-base">{project.role}</h1>
-                      </div>
-
-
-                    </div>
-
-                    {/* Project Image Card */}
-                    <div className="h-72 md:h-96 rounded-xl relative overflow-hidden group/image min-h-0">
-                      <img
-                        src={project.image}
-                        alt={project.name}
-                        className="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover/image:scale-110 group-hover/image:brightness-110"
+              {/* Conteneur du contenu (pointer-events-none pour laisser passer le clic vers l'overlay) */}
+              <div className="relative z-20 w-full h-full flex flex-col justify-between pointer-events-none">
+                {/* Badges Technologies */}
+                <div className="flex gap-2 justify-between">
+                  <div className="flex gap-2 flex-wrap">
+                    {project.techIcons.map(({ Icon, color }, index) => (
+                      <TechBadge
+                        key={index}
+                        Icon={(props) => <Icon {...props} style={{ color }} />}
                       />
-                      {project.status === "En attente" && (
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[2px]">
-                          <span className="bg-[#FF4D00] text-white px-6 py-2 rounded-full font-bold text-base md:text-lg transform -rotate-12 shadow-xl border-2 border-white/30 whitespace-nowrap">
-                            En attente
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Project Info */}
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex gap-2 flex-wrap">
-                          <span className="text-sm font-medium bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm text-black">
-                            {project.name}
-                          </span>
-                          <span className="text-sm font-medium bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm text-black">
-                            {project.category}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </a>
-              ) : (
-                <div className="relative z-10 w-full h-full flex flex-col justify-between">
-                  {/* Technology Badges */}
-                  <div className="flex gap-2 justify-between ">
-                    <div className="flex gap-2 flex-wrap">
-                      {project.techIcons.map(({ Icon, color }, index) => (
-                        <TechBadge
-                          key={index}
-                          Icon={(props) => <Icon {...props} style={{ color }} />}
-                        />
-                      ))}
-                    </div>
-
-                    <div className="">
-                      <h1 className="text-xs md:text-base">{project.role}</h1>
-                    </div>
-
-
-
+                    ))}
                   </div>
 
-                  {/* Project Image Card */}
-                  <div className="h-72 md:h-96 rounded-xl relative overflow-hidden group/image min-h-0">
-                    <img
-                      src={project.image}
-                      alt={project.name}
-                      className="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover/image:scale-110 group-hover/image:brightness-110"
-                    />
-                    {project.status === "En attente" && (
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[2px]">
-                        <span className="bg-[#FF4D00] text-white px-6 py-2 rounded-full font-bold text-base md:text-lg transform -rotate-12 shadow-xl border-2 border-white/30 whitespace-nowrap">
-                          En attente
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Project Info */}
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex gap-2 flex-wrap">
-                        <span className="text-sm font-medium bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm text-black">
-                          {project.name}
-                        </span>
-                        <span className="text-sm font-medium bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm text-black">
-                          {project.category}
-                        </span>
-                      </div>
-                    </div>
+                  <div className="text-gray-700">
+                    <h1 className="text-xs md:text-base">{project.role}</h1>
                   </div>
                 </div>
-              )}
+
+                {/* Image du Projet */}
+                <div className="h-72 md:h-96 rounded-xl relative overflow-hidden group/image min-h-0">
+                  <img
+                    src={project.image}
+                    alt={project.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover/image:scale-110 group-hover/image:brightness-110"
+                  />
+                  {project.status === "En attente" && (
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[2px]">
+                      <span className="bg-[#FF4D00] text-white px-6 py-2 rounded-full font-bold text-base md:text-lg transform -rotate-12 shadow-xl border-2 border-white/30 whitespace-nowrap">
+                        En attente
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Infos du Projet et Bouton de Like */}
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex gap-2 flex-wrap">
+                      <span className="text-sm font-medium bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm text-black">
+                        {project.name}
+                      </span>
+                      <span className="text-sm font-medium bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm text-black">
+                        {project.category}
+                      </span>
+                    </div>
+
+                    {/* Bouton de Like (pointer-events-auto pour intercepter les clics) */}
+                    <button
+                      onClick={(e) => handleLike(project.id, e)}
+                      disabled={likedProjects.includes(project.id)}
+                      className={`pointer-events-auto flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-300 transform active:scale-95 z-30 flex-shrink-0 ${
+                        likedProjects.includes(project.id)
+                          ? "bg-orange-50 border-[#FF4D00]/20 text-[#FF4D00] cursor-default"
+                          : "bg-white border-gray-200 text-gray-400 hover:text-[#FF4D00] hover:border-[#FF4D00]/30 hover:bg-orange-50/50 cursor-pointer shadow-sm"
+                      } group/like`}
+                    >
+                      <span className={`transition-transform duration-300 ${!likedProjects.includes(project.id) ? "group-hover/like:scale-120 group-hover/like:rotate-12" : ""}`}>
+                        {likedProjects.includes(project.id) ? (
+                          <FaHeart className="w-4 h-4 text-[#FF4D00]" />
+                        ) : (
+                          <FaRegHeart className="w-4 h-4" />
+                        )}
+                      </span>
+                      <span className={`text-xs md:text-sm font-bold ${likedProjects.includes(project.id) ? "text-gray-900" : "text-gray-500"}`}>
+                        {likes[project.id] || 0}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </Card>
           ))}
         </div>
