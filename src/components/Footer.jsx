@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue, runTransaction } from "firebase/database";
 import { FiGithub, FiFacebook } from "react-icons/fi";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import ScrollReveal from "scrollreveal";
 
 // CONFIGURATION SÉCURISÉE VIA .env.local (VITE)
+// ... (omitted config for brevity in replace_file_content if possible, but I'll replace the block)
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -26,6 +29,8 @@ try {
 
 const Footer = () => {
   const [visits, setVisits] = useState("...");
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!db) return;
@@ -46,33 +51,65 @@ const Footer = () => {
       setVisits(snapshot.val() || 0);
     });
 
-    return () => unsubscribe();
+    // ScrollReveal animations
+    const sr = ScrollReveal({
+      origin: "bottom",
+      distance: "30px",
+      duration: 1000,
+      delay: 200,
+      reset: true,
+    });
+
+    sr.reveal(".footer-logo", { origin: "left", delay: 300 });
+    sr.reveal(".footer-nav", { origin: "right", delay: 400 });
+    sr.reveal(".footer-slogan", { delay: 500 });
+    sr.reveal(".footer-contact", { interval: 200, delay: 600 });
+    sr.reveal(".footer-bottom", { delay: 800 });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   return (
-    <footer className="bg-black text-white px-4 md:px-16 py-12 md:py-16">
+    <footer id="contact" className="bg-black text-white px-4 md:px-16 py-12 md:py-16">
       {/* Header */}
       <div className="flex flex-row items-start justify-between mb-12 md:mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold">dera.</h2>
+        <h2 className="text-3xl md:text-4xl font-bold footer-logo">
+          <Link to="/">dera.</Link>
+        </h2>
 
-        <nav className="grid grid-cols-2 gap-x-12 gap-y-2 md:flex md:gap-8 lg:gap-12 text-right md:text-left">
-          <a href="#aboutus" className="hover:text-orange-500 transition-colors text-xs sm:text-sm md:text-base">
-            A propos
-          </a>
-          <a href="#features" className="hover:text-orange-500 transition-colors text-xs sm:text-sm md:text-base">
-            Projets récents
-          </a>
-          <a href="#pricing" className="hover:text-orange-500 transition-colors text-xs sm:text-sm md:text-base">
-            Services
-          </a>
-          <a href="#contact" className="hover:text-orange-500 transition-colors text-xs sm:text-sm md:text-base">
+        <nav className="grid grid-cols-2 gap-x-12 gap-y-2 md:flex md:gap-8 lg:gap-12 text-right md:text-left footer-nav">
+          <Link
+            to="/"
+            onClick={(e) => {
+              if (location.pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+            className="hover:text-orange-500 transition-colors text-xs sm:text-sm md:text-base"
+          >
+            Accueil
+          </Link>
+          <Link to="/about" className="hover:text-orange-500 transition-colors text-xs sm:text-sm md:text-base">
+            À propos
+          </Link>
+          <a
+            href="#contact"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="hover:text-orange-500 transition-colors text-xs sm:text-sm md:text-base"
+          >
             Contact
           </a>
         </nav>
       </div>
 
       {/* Slogan */}
-      <div className="mb-8 md:mb-28">
+      <div className="mb-8 md:mb-28 footer-slogan">
         <h1 className="text-3xl lg:text-5xl font-bold leading-tight text-left md:text-center">
           Développeur passionné, <br />
           je transforme vos idées en solutions digitales <br />
@@ -81,13 +118,13 @@ const Footer = () => {
       </div>
 
       {/* Contacts Mobile */}
-      <div className="flex flex-col gap-4 mb-8 md:hidden">
+      <div className="flex flex-col gap-4 mb-8 md:hidden footer-contact">
         <a
-          href="tel:+261331439387"
+          href="tel:+261341712742"
           className="inline-flex items-center gap-3 border border-white rounded-full px-6 py-3 hover:bg-white hover:text-black transition-colors duration-300 w-full"
         >
           <span className="text-xl">•</span>
-          <span className="text-xs font-medium">+261 33 14 393 87</span>
+          <span className="text-xs font-medium">+261 34 17 127 42</span>
         </a>
 
         <a
@@ -97,10 +134,20 @@ const Footer = () => {
           <span className="text-xl">•</span>
           <span className="text-xs font-medium">@DERASOSIALY@GMAIL.COM</span>
         </a>
+
+        <a
+          href="https://calendly.com/derasosialy/new-meeting"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-3 border border-orange-500 rounded-full px-6 py-3 hover:bg-orange-500 hover:text-white transition-colors duration-300 w-full bg-orange-500/10"
+        >
+          <span className="text-xl">•</span>
+          <span className="text-xs font-medium uppercase tracking-wider">Planifier un appel</span>
+        </a>
       </div>
 
       {/* Bottom Section */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 footer-contact">
         <div className="text-sm md:text-base text-gray-300">
           <p>Créons ensemble des applications web</p>
           <p>qui allient performance et innovation.</p>
@@ -108,11 +155,11 @@ const Footer = () => {
 
         <div className="hidden md:flex flex-row gap-4">
           <a
-            href="tel:+261331439387"
+            href="tel:+261341712742"
             className="inline-flex items-center gap-3 border border-white rounded-full px-6 py-3 hover:bg-white hover:text-black transition-colors duration-300"
           >
             <span className="text-xl">•</span>
-            <span className="text-xs font-medium">+261 33 14 393 87</span>
+            <span className="text-xs font-medium">+261 34 17 127 42</span>
           </a>
 
           <a
@@ -122,11 +169,21 @@ const Footer = () => {
             <span className="text-xl">•</span>
             <span className="text-xs font-medium">@DERASOSIALY@GMAIL.COM</span>
           </a>
+
+          <a
+            href="https://calendly.com/derasosialy/new-meeting"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 border border-white rounded-full px-6 py-3 hover:bg-white hover:text-black transition-colors duration-300"
+          >
+            <span className="text-xl">•</span>
+            <span className="text-xs font-medium uppercase tracking-wider">Planifier dans Calendly</span>
+          </a>
         </div>
       </div>
 
       {/* RÉSEAUX + COMPTEUR + COPYRIGHT */}
-      <div className="mt-10 flex flex-col items-center gap-6 md:flex-row md:justify-between md:items-center">
+      <div className="mt-10 flex flex-col items-center gap-6 md:flex-row md:justify-between md:items-center footer-bottom">
         {/* Icônes sociales */}
         <div className="flex gap-4">
           <a
@@ -156,7 +213,7 @@ const Footer = () => {
 
         {/* Copyright */}
         <div className="text-xs md:text-sm text-gray-400 text-center md:text-right">
-          © portfolio dera 2025
+          © portfolio dera 2026
         </div>
       </div>
     </footer>

@@ -5,6 +5,7 @@ import {
   FaReact,
   FaNodeJs,
   FaPhp,
+  FaLaravel,
   FaSymfony,
   FaVuejs,
   FaAngular,
@@ -16,6 +17,7 @@ import {
 import {
   SiTailwindcss,
   SiNextdotjs,
+  SiNestjs,
   SiTypescript,
   SiStripe,
   SiMongodb,
@@ -32,6 +34,15 @@ import {
   SiExpress,
 } from "react-icons/si";
 
+import sary1 from "../images/sirius.webp";
+import sary2 from "../images/pro.jpg";
+import tourImg from "../images/tour.jpg";
+import ibiznaImg from "../images/ibizna.webp";
+import ittImg from "../images/itt.jpg";
+import hihaonaImg from "../images/hihaona.webp";
+import placeholderImg from "../images/placeholder.png";
+import portfolioImg from "../images/portfolio.jpg";
+
 // Custom Card component
 const Card = ({ children, className }) => (
   <div className={`bg-gray-200  p-6 text-xs ${className}`}>
@@ -39,19 +50,23 @@ const Card = ({ children, className }) => (
   </div>
 );
 
+
 // TechBadge avec react-icons
 const TechBadge = ({ Icon }) => (
-  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center p-2 shadow-sm">
+  <div className="w-8 h-8 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center p-1.5 md:p-2 shadow-sm">
     <Icon className="w-full h-full" />
   </div>
 );
 
-// === Données projets avec react-icons ===
+// === Données projets avec react-icons === 
 const projects = [
   {
     id: 1,
-    name: "Projet Pnud",
-    category: "Urbanisme",
+    name: "Sirius Expédition",
+    category: "Web Touristique",
+    role: "Développeur Frontend",
+    link: "https://surius.netlify.app",
+    image: sary1,
     techIcons: [
       { Icon: FaReact, color: "#61DAFB" },
       { Icon: SiExpress, color: "#000000" },
@@ -60,93 +75,118 @@ const projects = [
   },
   {
     id: 2,
-    name: "E-Commerce App",
-    category: "Web",
+    name: "Antsika Tour",
+    category: "Web Touristique",
+    role: "Frontend & Designer",
+    link: "https://antsikatour.netlify.app",
+    image: tourImg,
     techIcons: [
+      { Icon: FaLaravel, color: "#FF2D20" },
       { Icon: FaReact, color: "#61DAFB" },
-      { Icon: FaSymfony, color: "#000000" },
       { Icon: SiTailwindcss, color: "#06B6D4" },
     ],
   },
   {
     id: 3,
-    name: "Mobile Banking",
-    category: "Mobile",
+    name: "Ask'ibizna",
+    category: "Business Agricole",
+    role: "Designer",
+    link: "https://ask-ibizna.netlify.app",
+    image: ibiznaImg,
     techIcons: [
+      { Icon: FaSymfony, color: "#000000" },
       { Icon: FaReact, color: "#61DAFB" },
-      { Icon: FaNodeJs, color: "#339933" },
-      { Icon: SiMongodb, color: "#47A248" },
-    ],
-  },
-  {
-    id: 4,
-    name: "Dashboard Analytics",
-    category: "Web",
-    techIcons: [
-      { Icon: FaVuejs, color: "#42B883" },
-      { Icon: FaPython, color: "#3776AB" },
-      { Icon: SiPostgresql, color: "#336791" },
-    ],
-  },
-  {
-    id: 5,
-    name: "Social Network",
-    category: "Web",
-    techIcons: [
-      { Icon: FaAngular, color: "#DD0031" },
-      { Icon: SiFirebase, color: "#FFCA28" },
-      { Icon: FaReact, color: "#61DAFB" }, // Material UI ≈ React + MUI, on garde React
-    ],
-  },
-  {
-    id: 6,
-    name: "Fitness Tracker",
-    category: "Mobile",
-    techIcons: [
-      { Icon: SiFlutter, color: "#02569B" },
-      { Icon: SiDart, color: "#0175C2" },
-      { Icon: FaDatabase, color: "#003B57" }, // SQLite
-    ],
-  },
-  {
-    id: 7,
-    name: "CRM System",
-    category: "Enterprise",
-    techIcons: [
-      { Icon: FaReact, color: "#61DAFB" },
-      { Icon: SiExpress, color: "#000000" },
-      { Icon: SiMysql, color: "#4479A1" },
-    ],
-  },
-  {
-    id: 8,
-    name: "Blog Platform",
-    category: "Web",
-    techIcons: [
-      { Icon: SiNextdotjs, color: "#000000" },
-      { Icon: SiPrisma, color: "#2D3748" },
       { Icon: SiTailwindcss, color: "#06B6D4" },
     ],
   },
   {
-    id: 9,
-    name: "Delivery App",
-    category: "Mobile",
+    id: 4,
+    name: "Itt Mada",
+    category: "Agence Numérique",
+    role: "Développeur Frontend",
+    link: "https://ittmada.netlify.app",
+    image: ittImg,
     techIcons: [
       { Icon: FaReact, color: "#61DAFB" },
-      { Icon: SiGraphql, color: "#E535AB" },
-      { Icon: SiRedis, color: "#DC382D" },
+      { Icon: FaNodeJs, color: "#339933" },
     ],
   },
   {
-    id: 10,
-    name: "Portfolio Builder",
-    category: "Web",
+    id: 5,
+    name: "Hihaona",
+    category: "Plateforme de Rencontre",
+    role: "Designer & Frontend",
+    link: "https://hihaonabizness.netlify.app",
+    image: hihaonaImg,
     techIcons: [
-      { Icon: SiSvelte, color: "#FF3E00" },
-      { Icon: SiSupabase, color: "#3ECF8E" },
-      { Icon: FaCss3Alt, color: "#1572B6" },
+      { Icon: SiNestjs, color: "#E0234E" },
+      { Icon: FaReact, color: "#61DAFB" },
+      { Icon: SiTailwindcss, color: "#06B6D4" },
     ],
+  },
+  {
+    id: 6,
+    name: "Ask'Pro",
+    category: "Gestion de Rendez-vous",
+    role: "Développeur Frontend",
+    link: "https://ask-pro.netlify.app",
+    image: sary2,
+    techIcons: [
+      { Icon: FaLaravel, color: "#FF2D20" },
+      { Icon: SiTypescript, color: "#3178C6" },
+      { Icon: SiTailwindcss, color: "#06B6D4" },
+    ],
+  },
+  {
+    id: 7,
+    name: "Gestion de contrôle d'accès via QR code",
+    category: "Application Mobile",
+    role: "Designer, Frontend & Backend",
+    link: null,
+    image: placeholderImg,
+    techIcons: [
+      { Icon: FaLaravel, color: "#FF2D20" },
+      { Icon: FaReact, color: "#61DAFB" },
+    ],
+  },
+  {
+    id: 8,
+    name: "Portfolio",
+    category: "Site Personnel",
+    role: "Frontend & Designer",
+    link: null,
+    image: portfolioImg,
+    techIcons: [
+      { Icon: FaReact, color: "#61DAFB" },
+      { Icon: SiTailwindcss, color: "#06B6D4" },
+      { Icon: SiFirebase, color: "#FFCA28" },
+    ],
+  },
+  {
+    id: 9,
+    name: "iSmart",
+    category: "Gestion d'emploi du temps",
+    role: "Fullstack Mobile (React Native & Nest)",
+    link: null,
+    image: placeholderImg,
+    techIcons: [
+      { Icon: FaReact, color: "#61DAFB" },
+      { Icon: SiNestjs, color: "#E0234E" },
+    ],
+    status: "En attente"
+  },
+  {
+    id: 10,
+    name: "iHira",
+    category: "Répartition chorale",
+    role: "Développeur Mobile (Flutter)",
+    link: null,
+    image: placeholderImg,
+    techIcons: [
+      { Icon: SiFlutter, color: "#02569B" },
+      { Icon: SiDart, color: "#0175C2" },
+    ],
+    status: "En attente"
   },
 ];
 
@@ -197,57 +237,146 @@ const Projet = () => {
   }, []);
 
   return (
-    <div className="w-full mb-28 bg-white" ref={pinSection}>
+    <div className="w-full mb-10 bg-white" ref={pinSection}>
       {/* Title Section */}
-      <div className="px-4 md:px-8 py-12">
-        <h1 className="text-3xl md:text-5xl lg:text-5xl font-bold text-center mb-0 md:mb-10 leading-tight [letter-spacing:-0.05em]">
-          Tout les projets <br />
-          <span className="text-orange">Réalisés</span> par moi
-        </h1>
+      <div className="px-4 md:px-8 py-2 md:py-4 mt-6 md:mt-8 mb-2">
+        <div className="flex flex-col items-center justify-center text-center">
+          <div className="inline-block border border-black rounded-full px-8 py-2 md:py-4 mb-6">
+            <span className="text-xl font-bold tracking-wide">Mes <span className="text-[#FF4D00] ">Projets</span></span>
+          </div>
+
+          <p className="text-gray-500 text-sm md:text-xl max-w-2xl mx-auto ">
+            Des expériences digitales uniques et performantes, conçues avec passion.
+          </p>
+        </div>
       </div>
 
-      {/* Horizontal Scroll Container */}
+      {/* Horizontal Scroll Container (Desktop) / Vertical Scroll (Mobile) */}
       <div className="relative w-full overflow-hidden">
         <div
-          className="flex flex-col lg:flex-row gap-6 px-4 md:px-8 pb-4"
+          className="flex flex-col lg:flex-row gap-6 lg:gap-6 px-4 md:px-8 pb-4"
           ref={scrollRef}
           style={{ willChange: "transform" }}
         >
           {projects.map((project) => (
-            <Card key={project.id} className="project-card group">
-              {/* Technology Badges */}
-              <div className="flex gap-4">
-                {project.techIcons.map(({ Icon, color }, index) => (
-                  <TechBadge
-                    key={index}
-                    Icon={(props) => <Icon {...props} style={{ color }} />}
-                  />
-                ))}
-              </div>
+            <Card key={project.id} className="project-card group relative overflow-hidden">
+              {project.link ? (
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full h-full cursor-pointer"
+                >
+                  {/* Content Wrapper */}
+                  <div className="relative z-10 w-full h-full flex flex-col justify-between">
+                    {/* Technology Badges */}
+                    <div className="flex gap-2 justify-between ">
+                      <div className="flex gap-2 flex-wrap">
+                        {project.techIcons.map(({ Icon, color }, index) => (
+                          <TechBadge
+                            key={index}
+                            Icon={(props) => <Icon {...props} style={{ color }} />}
+                          />
+                        ))}
+                      </div>
 
-              {/* Espace image */}
-              <div className="flex-1" />
+                      <div className="">
+                        <h1 className="text-xs md:text-base">{project.role}</h1>
+                      </div>
 
-              {/* Project Info */}
-              <div className="flex flex-col gap-2 mt-[30rem]">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex gap-4">
-                    <span className="text-sm font-medium bg-white px-4 py-2 rounded-full">
-                      {project.name}
-                    </span>
-                    <span className="text-sm font-medium bg-white px-4 py-2 rounded-full">
-                      {project.category}
-                    </span>
+
+                    </div>
+
+                    {/* Project Image Card */}
+                    <div className="h-72 md:h-96 rounded-xl relative overflow-hidden group/image min-h-0">
+                      <img
+                        src={project.image}
+                        alt={project.name}
+                        className="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover/image:scale-110 group-hover/image:brightness-110"
+                      />
+                      {project.status === "En attente" && (
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[2px]">
+                          <span className="bg-[#FF4D00] text-white px-6 py-2 rounded-full font-bold text-base md:text-lg transform -rotate-12 shadow-xl border-2 border-white/30 whitespace-nowrap">
+                            En attente
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Project Info */}
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex gap-2 flex-wrap">
+                          <span className="text-sm font-medium bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm text-black">
+                            {project.name}
+                          </span>
+                          <span className="text-sm font-medium bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm text-black">
+                            {project.category}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              ) : (
+                <div className="relative z-10 w-full h-full flex flex-col justify-between">
+                  {/* Technology Badges */}
+                  <div className="flex gap-2 justify-between ">
+                    <div className="flex gap-2 flex-wrap">
+                      {project.techIcons.map(({ Icon, color }, index) => (
+                        <TechBadge
+                          key={index}
+                          Icon={(props) => <Icon {...props} style={{ color }} />}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="">
+                      <h1 className="text-xs md:text-base">{project.role}</h1>
+                    </div>
+
+
+
+                  </div>
+
+                  {/* Project Image Card */}
+                  <div className="h-72 md:h-96 rounded-xl relative overflow-hidden group/image min-h-0">
+                    <img
+                      src={project.image}
+                      alt={project.name}
+                      className="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover/image:scale-110 group-hover/image:brightness-110"
+                    />
+                    {project.status === "En attente" && (
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[2px]">
+                        <span className="bg-[#FF4D00] text-white px-6 py-2 rounded-full font-bold text-base md:text-lg transform -rotate-12 shadow-xl border-2 border-white/30 whitespace-nowrap">
+                          En attente
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Project Info */}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex gap-2 flex-wrap">
+                        <span className="text-sm font-medium bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm text-black">
+                          {project.name}
+                        </span>
+                        <span className="text-sm font-medium bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm text-black">
+                          {project.category}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </Card>
           ))}
         </div>
       </div>
 
       {/* Scroll Hint */}
-      <div className="text-center mt-4 text-sm text-gray-500 px-4 md:px-8">
+      <div className="hidden lg:block text-center mt-4 text-sm text-gray-500 px-4 md:px-8">
         Scrollez pour voir plus de projets
       </div>
 
@@ -255,25 +384,33 @@ const Projet = () => {
       <style jsx>{`
         :root { --gap: 24px; }
 
+        /* Mobile: Grande card avec image pleine */
         .project-card {
-          flex: 0 0 100%;
+          flex: 0 0 auto;
+          width: 100%;
           max-width: 100%;
-          height: 520px;
-          box-shadow: 0 6px 18px rgba(10,10,10,0.03);
-          border-radius: 0.5rem;
+          height: 480px;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 6px 18px rgba(10,10,10,0.06);
+          border-radius: 0.75rem;
         }
 
+        /* Tablet */
         @media (min-width: 640px) {
           :root { --gap: 20px; }
-          .project-card { height: 560px; }
+          .project-card { 
+            height: 520px;
+          }
         }
 
+        /* Desktop: Slider horizontal avec 3 cards */
         @media (min-width: 1024px) {
           :root { --gap: 24px; }
           .project-card {
             flex: 0 0 calc((100% - (var(--gap) * 2)) / 3);
             max-width: calc((100% - (var(--gap) * 2)) / 3);
-            height: 600px;
+            height: 540px;
           }
         }
       `}</style>

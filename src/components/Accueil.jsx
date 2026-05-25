@@ -80,7 +80,7 @@ const Accueil = () => {
         <div className="block lg:hidden w-full flex flex-col items-center justify-center pt-0 mt-[-65px]">
           <div className="text-[25px] sm:text-[60px] font-bold text-center leading-[1.2]">
             <span className="text-white text-[45px] sm:text-[90px] uppercase ">
-              Devéloppeur
+              Développeur
             </span>
             <br />
             <span style={{ color: "#FF4D00" }} className="uppercase">Web & Mobile</span>
@@ -89,17 +89,17 @@ const Accueil = () => {
             className="mt-6 text-white text-center text-[13px] sm:text-[15px] font-light max-w-xs mx-auto shadow-md"
             style={{ textShadow: "0 1px 8px #0008" }}
           >
-             Développer des applications innovantes
+            Développer des applications innovantes
             <br />
-            pour répondre aus besoins du monde numérique.
+            pour répondre aux besoins du monde numérique.
           </div>
         </div>
         {/* Desktop principal text */}
         <div className="hidden lg:flex items-center justify-center w-full h-full">
           <h1
-            className="principal text-center text-white font-bold max-w-[100vw] mt-[-20vh]" 
+            className="principal text-center text-white font-bold max-w-[100vw] mt-[-20vh]"
             style={{
-              fontSize: "clamp(8rem, 14vw, 16rem)", 
+              fontSize: "clamp(8rem, 14vw, 16rem)",
               lineHeight: 1,
               wordBreak: "break-word",
             }}
@@ -121,7 +121,7 @@ const Accueil = () => {
       <div className="w-full pb-6 absolute bottom-0 left-0 z-10 flex flex-col items-center">
         {/* Mobile: centered, small */}
         <p className="block lg:hidden text-white text-xs text-center tracking-wide mb-20">
-           Portfolio 2025
+          Portfolio 2026
         </p>
         {/* Desktop: original layout */}
         <div className="hidden lg:flex flex-row justify-between items-center gap-4 w-full px-16 mb-10">
@@ -130,7 +130,7 @@ const Accueil = () => {
             développement web et mobile.
           </p>
           <p className="text-white text-xs sm:text-base text-bas mr-36">
-            Portfolio  2025
+            Portfolio  2026
           </p>
           <p className="text-white text-xs sm:text-base text-center lg:text-right text-droite">
             L'avenir ne se prédit pas, <br />

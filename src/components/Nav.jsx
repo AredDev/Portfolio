@@ -1,18 +1,31 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useLocation, Link } from 'react-router-dom';
+import { Home, User, Mail, MessageCircle } from 'lucide-react';
+import ContactModal from './ContactModal';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const NavItem = ({ text, index }) => {
+const NavItem = ({ text, to, href, index }) => {
   const linkRef = useRef(null);
 
   useEffect(() => {
     const link = linkRef.current;
+    if (!link) return;
+
+    // Simple letter animation setup if we want it, 
+    // but for now let's just keep the hover/mousemove logic if the text is split.
+    // To safe guard, we will just do standard hover if text is dynamic.
+    // Actually, let's keep the cool letter effect!
+
     const letters = link.querySelectorAll('.letter');
 
     const handleMouseMove = (e) => {
       const letter = e.target;
+      // Safety check
+      if (!letter.classList.contains('letter')) return;
+
       const rect = letter.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;
       const y = e.clientY - rect.top - rect.height / 2;
@@ -23,6 +36,8 @@ const NavItem = ({ text, index }) => {
 
     const handleMouseLeave = (e) => {
       const letter = e.target;
+      if (!letter.classList.contains('letter')) return;
+
       letter.style.setProperty('--x', '0px');
       letter.style.setProperty('--y', '0px');
     };
@@ -38,308 +53,329 @@ const NavItem = ({ text, index }) => {
         letter.removeEventListener('mouseleave', handleMouseLeave);
       });
     };
-  }, []);
+  }, [text]); // Re-run if text changes
+
+  const content = (
+    <>
+      {text.split('').map((char, i) => (
+        <span
+          key={i}
+          className="letter inline-block relative"
+          style={{ transition: 'transform 0.2s ease' }}
+        >
+          {char === ' ' ? '\u00A0' : char}
+        </span>
+      ))}
+    </>
+  );
+
+  const className = "relative z-10 text-white font-medium flex text-lg px-2 py-1";
 
   return (
-    <li className="relative px-2 nav-item" data-index={index}>
-      <a
-        href="#"
-        ref={linkRef}
-        className="relative z-10 text-white font-medium flex"
-      >
-
-        {/* Ici que je devrais faire l'effet zoom */}
-        {text.split('').map((char, index) => (
-          <span
-            key={index}
-            className=""
-          >
-            {char === ' ' ? '\u00A0' : char}
-          </span>
-        ))}
-      </a>
-    </li>
+    <div className="nav-item">
+      {to ? (
+        <Link to={to} ref={linkRef} className={className}>
+          {content}
+        </Link>
+      ) : (
+        <a href={href} ref={linkRef} className={className}>
+          {content}
+        </a>
+      )}
+    </div>
   );
 };
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+  const location = useLocation();
   const cursorRef = useRef(null);
   const desktopNavRef = useRef(null);
   const logoRef = useRef(null);
   const leftMenuRef = useRef(null);
   const rightMenuRef = useRef(null);
-  
-  // Mobile refs
-  const menuRef = useRef(null);
-  const menuLinksRef = useRef([]);
-  const footerTextRef = useRef(null);
-  const timelineRef = useRef(null);
+  const mobileLogoRef = useRef(null);
 
-  // Cursor effect
+  // Cursor effect state
+  const [isHovered, setIsHovered] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Layout State
+  const isHome = location.pathname === '/';
+
+  // --- CURSOR LOGIC ---
   useEffect(() => {
     const cursor = cursorRef.current;
+
     const handleMouseMove = (e) => {
       if (cursor) {
-        cursor.style.transform = `translate(${e.clientX - 12.5}px, ${e.clientY - 12.5}px)`;
+        cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
       }
+    };
+
+    const handleMouseOver = (e) => {
+      if (e.target.tagName.toLowerCase() === 'a' ||
+        e.target.tagName.toLowerCase() === 'button' ||
+        e.target.closest('a') ||
+        e.target.closest('button') ||
+        e.target.classList.contains('cursor-pointer') ||
+        e.target.classList.contains('nav-item')) {
+        setIsHovered(true);
+      }
+    };
+
+    const handleMouseOut = () => {
+      setIsHovered(false);
     };
 
     document.addEventListener('mousemove', handleMouseMove);
-    return () => document.removeEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseover', handleMouseOver);
+    document.addEventListener('mouseout', handleMouseOut);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseout', handleMouseOut);
+    };
   }, []);
 
-  // 🎨 ANIMATION 1: Apparition au chargement
+  // --- APPEARANCE ANIMATION ---
   useEffect(() => {
     const nav = desktopNavRef.current;
     const logo = logoRef.current;
-    const leftItems = leftMenuRef.current?.querySelectorAll('.nav-item');
-    const rightItems = rightMenuRef.current?.querySelectorAll('.nav-item');
+    const leftEl = leftMenuRef.current;
+    const rightEl = rightMenuRef.current;
 
     if (!nav) return;
 
-    // État initial
     gsap.set(nav, { y: -100, opacity: 0 });
     gsap.set(logo, { scale: 0, opacity: 0 });
-    gsap.set([leftItems, rightItems], { y: -30, opacity: 0 });
+    gsap.set([leftEl, rightEl], { y: -30, opacity: 0 });
 
-    // Timeline d'apparition
     const tl = gsap.timeline({ delay: 0.2 });
-    
-    tl.to(nav, { 
-      y: 0, 
-      opacity: 1, 
-      duration: 0.8, 
-      ease: 'power3.out' 
+
+    tl.to(nav, {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      ease: 'power3.out'
     })
-    .to(logo, { 
-      scale: 1, 
-      opacity: 1, 
-      duration: 0.6, 
-      ease: 'back.out(1.7)' 
-    }, '-=0.5')
-    .to(leftItems, { 
-      y: 0, 
-      opacity: 1, 
-      duration: 0.6, 
-      stagger: 0.1, 
-      ease: 'power2.out' 
-    }, '-=0.4')
-    .to(rightItems, { 
-      y: 0, 
-      opacity: 1, 
-      duration: 0.6, 
-      stagger: 0.1, 
-      ease: 'power2.out' 
-    }, '-=0.6');
+      .to(logo, {
+        scale: 1,
+        opacity: 1,
+        duration: 0.6,
+        ease: 'back.out(1.7)'
+      }, '-=0.5')
+      .to([leftEl, rightEl], {
+        y: 0,
+        opacity: 1,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'power2.out'
+      }, '-=0.4');
 
     return () => tl.kill();
   }, []);
 
-  // 🎨 ANIMATION 2 & 3: Cache/Montre au scroll (activé après l'animation initiale)
+  // --- SCROLL HIDE/SHOW LOGIC ---
   useEffect(() => {
+    let lastScrollY = window.scrollY;
     const nav = desktopNavRef.current;
-    if (!nav) return;
 
-    let lastScrollY = 0;
-    let ticking = false;
+    const handleScroll = () => {
+      if (!nav) return;
 
-    const updateNavbar = () => {
-      const scrollY = window.scrollY;
+      const currentScrollY = window.scrollY;
+      const isScrollingDown = currentScrollY > lastScrollY;
+      const scrollDifference = Math.abs(currentScrollY - lastScrollY);
 
-      if (scrollY > lastScrollY && scrollY > 100) {
-        // Scroll DOWN - Cache la navbar
-        gsap.to(nav, { 
-          y: -100, 
-          duration: 0.3, 
-          ease: 'power2.inOut' 
-        });
-      } else if (scrollY < lastScrollY) {
-        // Scroll UP - Montre la navbar
-        gsap.to(nav, { 
-          y: 0, 
-          duration: 0.3, 
-          ease: 'power2.inOut' 
-        });
-      }
-
-      lastScrollY = scrollY;
-      ticking = false;
-    };
-
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(updateNavbar);
-        ticking = true;
+      // Only trigger if minimal scroll occurred to avoid jitter
+      if (scrollDifference > 5) {
+        if (isScrollingDown && currentScrollY > 50) {
+          // Hide nav
+          gsap.to(nav, {
+            yPercent: -100,
+            duration: 0.8,
+            ease: 'power2.out',
+            overwrite: 'auto'
+          });
+        } else {
+          // Show nav
+          gsap.to(nav, {
+            yPercent: 0,
+            duration: 0.8,
+            ease: 'power2.out',
+            overwrite: 'auto'
+          });
+        }
+        lastScrollY = currentScrollY;
       }
     };
 
-    // Attendre que l'animation initiale soit terminée (1.5s)
-    const timer = setTimeout(() => {
-      window.addEventListener('scroll', onScroll);
-    }, 1500);
-
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('scroll', onScroll);
-    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // 📱 Mobile Menu Animation (GSAP)
+  // --- MOBILE LOGO SCROLL HIDE/SHOW ---
   useEffect(() => {
-    const menu = menuRef.current;
-    const links = menuLinksRef.current;
-    const footer = footerTextRef.current;
+    let lastScrollY = window.scrollY;
+    const mobileLogo = mobileLogoRef.current;
 
-    if (!menu) return;
+    const handleMobileScroll = () => {
+      if (!mobileLogo) return;
 
-    const visibleLinks = links.filter(Boolean);
+      const currentScrollY = window.scrollY;
+      const isScrollingDown = currentScrollY > lastScrollY;
+      const diff = Math.abs(currentScrollY - lastScrollY);
 
-    const tl = gsap.timeline({
-      defaults: { duration: 0.6, ease: 'power3.inOut' },
-      paused: true
-    });
-
-    gsap.set(menu, { clipPath: 'inset(0% 0% 0% 100%)' });
-    gsap.set([...visibleLinks, footer].filter(Boolean), { opacity: 1, y: 0 });
-
-    tl.to(menu, { clipPath: 'inset(0% 0% 0% 0%)' });
-
-    timelineRef.current = tl;
-
-    return () => tl.kill();
-  }, []);
-
-  useEffect(() => {
-    const tl = timelineRef.current;
-    if (!tl) return;
-
-    if (isMenuOpen) {
-      tl.play();
-    } else {
-      tl.reverse();
-    }
-  }, [isMenuOpen]);
-
-  // Lock body scroll when mobile menu is open
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
+      if (diff > 5) {
+        if (isScrollingDown && currentScrollY > 40) {
+          gsap.to(mobileLogo, {
+            y: -80,
+            opacity: 0,
+            duration: 0.4,
+            ease: 'power2.out',
+            overwrite: 'auto'
+          });
+        } else {
+          gsap.to(mobileLogo, {
+            y: 0,
+            opacity: 1,
+            duration: 0.4,
+            ease: 'power2.out',
+            overwrite: 'auto'
+          });
+        }
+        lastScrollY = currentScrollY;
+      }
     };
-  }, [isMenuOpen]);
+
+    window.addEventListener('scroll', handleMobileScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleMobileScroll);
+  }, []);
 
   return (
     <div className="bg-black text-white relative">
+      {/* CUSTOM CURSOR */}
       <div
         ref={cursorRef}
-        className="fixed w-12 h-12 rounded-full bg-white mix-blend-difference z-50 pointer-events-none hidden md:block"
-        style={{ transform: 'translate(-100%, -100%)' }}
-      />
-      
-      {/* Desktop Navigation */}
-      <nav 
-        ref={desktopNavRef}
-        className="hidden lg:flex px-16 py-6 justify-between items-center fixed top-0 left-0 right-0 bg-black z-40"
+        className="fixed top-0 left-0 z-50 pointer-events-none mix-blend-difference hidden md:block"
+        style={{ transform: 'translate(-100px, -100px)' }}
       >
-        <ul ref={leftMenuRef} className="flex gap-8">
-          <NavItem text="A propos" index={0} />
-          <NavItem text="Projets récents" index={1} />
-        </ul>
-        <div ref={logoRef} className="text-4xl font-bold mr-[80px]">dera.</div>
-        <ul ref={rightMenuRef} className="flex gap-8">
-          <NavItem text="Services" index={2} />
-          <NavItem text="Contact" index={3} />
-        </ul>
-      </nav>
-
-      {/* Spacer pour le fixed navbar */}
-      <div className="hidden lg:block h-[88px]"></div>
-
-      {/* Mobile Navigation */}
-      <nav className="lg:hidden px-4 py-4 flex justify-between items-center relative bg-black">
-        <div className="text-2xl font-light">dera.</div>
-        <button
-          aria-label={isMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
-          onClick={() => setIsMenuOpen(v => !v)}
-          className="w-10 h-10 flex items-center justify-center z-[60] relative"
-        >
-          <span
-            className={`absolute block w-6 h-0.5 bg-white transition-transform duration-300 ease-out ${
-              isMenuOpen ? 'rotate-45 translate-y-0' : '-translate-y-2'
+        <div
+          className={`w-12 h-12 rounded-full bg-white transition-transform duration-300 ease-out -translate-x-1/2 -translate-y-1/2 ${isHovered ? 'scale-[2.5]' : 'scale-100'
             }`}
-          />
-          <span
-            className={`absolute block w-6 h-0.5 bg-white transition-all duration-300 ease-out ${
-              isMenuOpen ? 'opacity-0' : 'opacity-100'
-            }`}
-          />
-          <span
-            className={`absolute block w-6 h-0.5 bg-white transition-transform duration-300 ease-out ${
-              isMenuOpen ? '-rotate-45 translate-y-0' : 'translate-y-2'
-            }`}
-          />
-        </button>
+        />
+      </div>
 
-        {/* Mobile Menu Overlay */}
-        <div 
-          ref={menuRef}
-          className="fixed top-0 left-0 w-full h-screen z-50"
-        >
-          <div className="absolute inset-0 backdrop-blur-md bg-black/80" />
-            
-          <div className="relative h-full flex flex-col items-center justify-center">
-            <div className="flex flex-col items-center gap-8">
-              <a 
-                href="#" 
-                ref={el => menuLinksRef.current[0] = el}
-                className="text-xl font-light flex items-center gap-2"
-              >
-                <span className="w-1.5 h-1.5 bg-white rounded-full"/> A propos
-              </a>
-              <a 
-                href="#" 
-                ref={el => menuLinksRef.current[1] = el}
-                className="text-xl font-light"
-              >
-                Projets récents
-              </a>
-              <a 
-                href="#" 
-                ref={el => menuLinksRef.current[2] = el}
-                className="text-xl font-light"
-              >
-                Services
-              </a>
-              <a 
-                href="#" 
-                ref={el => menuLinksRef.current[3] = el}
-                className="text-xl font-light"
-              >
-                Contact
-              </a>
-            </div>
-            <div className="absolute bottom-2" ref={footerTextRef}>
-              <p className="text-sm font-light">Summer Portfolio 2025</p>
-            </div>
+      {/* DESKTOP NAVIGATION (Hidden on mobile) */}
+      <nav
+        ref={desktopNavRef}
+        className="hidden lg:flex px-16 py-6 justify-between items-center fixed top-0 left-0 right-0 bg-black z-40 border-b border-gray-800"
+      >
+        {/* Left: A propos OR Accueil */}
+        <div ref={leftMenuRef}>
+          {isHome ? (
+            <NavItem text="À propos" to="/about" index={0} />
+          ) : (
+            <NavItem text="Accueil" to="/" index={0} />
+          )}
+        </div>
+
+        {/* Center: Logo */}
+        <div ref={logoRef} className="text-4xl font-bold absolute left-1/2 transform -translate-x-1/2 cursor-pointer">
+          <Link to="/">dera.</Link>
+        </div>
+
+        {/* Right: Contact */}
+        <div ref={rightMenuRef}>
+          <div className="nav-item">
+            <a
+              href="#contact"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('contact')?.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start'
+                });
+              }}
+              className="relative z-10 text-white font-medium flex text-lg px-2 py-1"
+            >
+              {['C', 'o', 'n', 't', 'a', 'c', 't'].map((char, i) => (
+                <span
+                  key={i}
+                  className="letter inline-block relative"
+                  style={{ transition: 'transform 0.2s ease' }}
+                >
+                  {char}
+                </span>
+              ))}
+            </a>
           </div>
         </div>
       </nav>
 
-      {/* Ligne de séparation */}
-      <div className="px-4 md:px-20 border-t border-gray-900" />
+      {/* spacer for fixed nav */}
+      <div className="hidden lg:block h-[88px]"></div>
 
-      
+      {/* MOBILE TOP BAR (Logo) */}
+      <div ref={mobileLogoRef} className="lg:hidden fixed top-0 left-0 p-6 z-40 mix-blend-difference">
+        <div className="text-2xl font-bold text-white">dera.</div>
+      </div>
+
+      {/* MOBILE BOTTOM NAVIGATION (Hidden on Desktop) */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-md border-t border-gray-800 z-50 pb-safe safe-area-inset-bottom">
+        <div className="flex justify-around items-center h-16 w-full max-w-md mx-auto">
+          {/* Home Icon */}
+          <Link
+            to="/"
+            className={`flex flex-col items-center justify-center w-16 h-full transition-colors ${isHome ? 'text-white' : 'text-gray-500'}`}
+          >
+            <Home strokeWidth={isHome ? 2.5 : 1.5} size={24} />
+          </Link>
+
+          {/* About Icon */}
+          <Link
+            to="/about"
+            className={`flex flex-col items-center justify-center w-16 h-full transition-colors ${location.pathname === '/about' ? 'text-white' : 'text-gray-500'}`}
+          >
+            <User strokeWidth={location.pathname === '/about' ? 2.5 : 1.5} size={24} />
+          </Link>
+
+          {/* Contact Icon (Link to modal or scroll) - Let's make it trigger modal if desired, or keep as scroll. 
+              The user asked for a floating button for the modal. 
+              Let's keep this as scroll for now to match the "Mail" icon semantics of "Contact Section".
+          */}
+          <a
+            href="#contact"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('contact')?.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }}
+            className="flex flex-col items-center justify-center w-16 h-full text-gray-500 hover:text-white transition-colors"
+          >
+            <Mail strokeWidth={1.5} size={24} />
+          </a>
+        </div>
+      </nav>
+
+      {/* FLOATING ACTION BUTTON (Messenger Style) */}
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="fixed z-50 bottom-20 right-4 lg:bottom-8 lg:right-8 bg-white text-black p-4 rounded-full shadow-lg hover:scale-110 transition-transform active:scale-95 flex items-center justify-center"
+      >
+        <MessageCircle size={28} strokeWidth={1.5} />
+      </button>
+
+      {/* CONTACT MODAL */}
+      <ContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
       <style jsx>{`
-        .letter {
-          transition: transform 0.2s ease;
-          transform: translate(var(--x, 0px), var(--y, 0px));
+        /* Safe area support for iPhone X+ */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
         }
       `}</style>
     </div>
