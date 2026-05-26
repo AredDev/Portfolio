@@ -2,8 +2,33 @@ import React, { useEffect } from "react";
 import myPhoto from "../images/dera-mobile.webp";
 import mobile from "../images/dera-mobile.webp";
 import ScrollReveal from "scrollreveal";
+import { useLanguage } from "./LanguageContext";
+
+const translations = {
+  FR: {
+    dev: "Développeur",
+    webMobile: "Web & Mobile",
+    introMobile: "Développer des applications innovantes\npour répondre aux besoins du monde numérique.",
+    mainTitlePrefix: "Développ",
+    mainTitleSuffix: "eur.",
+    discoverText: "Découvrez mon portfolio et explorez mes projets innovants en développement web et mobile.",
+    slogan: "L'avenir ne se prédit pas, \nil s'expérimente."
+  },
+  EN: {
+    dev: "Developer",
+    webMobile: "Web & Mobile",
+    introMobile: "Developing innovative applications\nto meet the needs of the digital world.",
+    mainTitlePrefix: "Develop",
+    mainTitleSuffix: "er.",
+    discoverText: "Discover my portfolio and explore my innovative projects in web and mobile development.",
+    slogan: "The future is not predicted, \nit is experienced."
+  }
+};
 
 const Accueil = () => {
+  const { language } = useLanguage();
+  const t = translations[language];
+
   useEffect(() => {
     const sr = ScrollReveal({
       origin: "bottom",
@@ -80,18 +105,16 @@ const Accueil = () => {
         <div className="block lg:hidden w-full flex flex-col items-center justify-center pt-0 mt-[-65px]">
           <div className="text-[25px] sm:text-[60px] font-bold text-center leading-[1.2]">
             <span className="text-white text-[45px] sm:text-[90px] uppercase ">
-              Développeur
+              {t.dev}
             </span>
             <br />
-            <span style={{ color: "#FF4D00" }} className="uppercase">Web & Mobile</span>
+            <span style={{ color: "#FF4D00" }} className="uppercase">{t.webMobile}</span>
           </div>
           <div
-            className="mt-6 text-white text-center text-[13px] sm:text-[15px] font-light max-w-xs mx-auto shadow-md"
+            className="mt-6 text-white text-center text-[13px] sm:text-[15px] font-light max-w-xs mx-auto shadow-md whitespace-pre-line"
             style={{ textShadow: "0 1px 8px #0008" }}
           >
-            Développer des applications innovantes
-            <br />
-            pour répondre aux besoins du monde numérique.
+            {t.introMobile}
           </div>
         </div>
         {/* Desktop principal text */}
@@ -104,17 +127,9 @@ const Accueil = () => {
               wordBreak: "break-word",
             }}
           >
-            Développ<span className="text-[#FF4D00]">eur.</span>
+            {t.mainTitlePrefix}<span className="text-[#FF4D00]">{t.mainTitleSuffix}</span>
           </h1>
         </div>
-
-        {/* Desktop intro text */}
-        {/* <div className="hidden">
-          <p className="text-white text-sm max-w-xs text-center mt-6 text-gauche">
-            Découvrez mon portfolio et explorez mes projets innovants en
-            développement web et mobile.
-          </p>
-        </div> */}
       </div>
 
       {/* Section du bas */}
@@ -125,16 +140,14 @@ const Accueil = () => {
         </p>
         {/* Desktop: original layout */}
         <div className="hidden lg:flex flex-row justify-between items-center gap-4 w-full px-16 mb-10">
-          <p className="text-white text-base max-w-xs text-gauche">
-            Découvrez mon portfolio et explorez mes projets innovants en
-            développement web et mobile.
+          <p className="text-white text-sm max-w-xs text-gauche">
+            {t.discoverText}
           </p>
           <p className="text-white text-xs sm:text-base text-bas mr-36">
-            Portfolio  2026
+            Portfolio 2026
           </p>
-          <p className="text-white text-xs sm:text-base text-center lg:text-right text-droite">
-            L'avenir ne se prédit pas, <br />
-            il s'expérimente.
+          <p className="text-white text-xs sm:text-base text-center lg:text-right text-droite whitespace-pre-line">
+            {t.slogan}
           </p>
         </div>
       </div>

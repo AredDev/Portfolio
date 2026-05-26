@@ -1,7 +1,40 @@
 import React, { useEffect } from 'react';
 import ScrollReveal from 'scrollreveal';
+import { useLanguage } from './LanguageContext';
+
+const translations = {
+  FR: {
+    titlePrefix: "Compétences ",
+    titleSuffix: "Techniques",
+    description: "Mes armes pour construire des interfaces intuitives",
+    categories: {
+      'LANGAGE DE PROGRAMMATION': 'LANGAGE DE PROGRAMMATION',
+      'FRONTEND': 'FRONTEND',
+      'UI/UX DESIGN': 'UI/UX DESIGN',
+      'BACKEND': 'BACKEND',
+      'BASE DE DONNÉES': 'BASE DE DONNÉES',
+      'OUTILS DE VERSIONNING': 'OUTILS DE VERSIONNING'
+    }
+  },
+  EN: {
+    titlePrefix: "Technical ",
+    titleSuffix: "Skills",
+    description: "My weapons to build intuitive interfaces",
+    categories: {
+      'LANGAGE DE PROGRAMMATION': 'PROGRAMMING LANGUAGES',
+      'FRONTEND': 'FRONTEND',
+      'UI/UX DESIGN': 'UI/UX DESIGN',
+      'BACKEND': 'BACKEND',
+      'BASE DE DONNÉES': 'DATABASES',
+      'OUTILS DE VERSIONNING': 'VERSION CONTROL'
+    }
+  }
+};
 
 const TechnicalSkills = () => {
+    const { language } = useLanguage();
+    const t = translations[language];
+
     useEffect(() => {
         const sr = ScrollReveal({
             origin: 'bottom',
@@ -27,10 +60,11 @@ const TechnicalSkills = () => {
             interval: 150,
         });
     }, []);
+
     const skillsData = [
         {
             id: 'L',
-            category: 'LANGAGE DE PROGRAMMATION',
+            categoryKey: 'LANGAGE DE PROGRAMMATION',
             skills: [
                 'JavaScript',
                 'TypeScript',
@@ -40,7 +74,7 @@ const TechnicalSkills = () => {
         },
         {
             id: 'F',
-            category: 'FRONTEND',
+            categoryKey: 'FRONTEND',
             skills: [
                 'ReactJS',
                 'VueJS',
@@ -51,7 +85,7 @@ const TechnicalSkills = () => {
         },
         {
             id: 'U',
-            category: 'UI/UX DESIGN',
+            categoryKey: 'UI/UX DESIGN',
             skills: [
                 'Adobe XD',
                 'Figma'
@@ -59,7 +93,7 @@ const TechnicalSkills = () => {
         },
         {
             id: 'B',
-            category: 'BACKEND',
+            categoryKey: 'BACKEND',
             skills: [
                 'NodeJS',
                 'Laravel',
@@ -68,7 +102,7 @@ const TechnicalSkills = () => {
         },
         {
             id: 'D',
-            category: 'BASE DE DONNÉES',
+            categoryKey: 'BASE DE DONNÉES',
             skills: [
                 'MySQL',
                 'PostgreSQL',
@@ -80,7 +114,7 @@ const TechnicalSkills = () => {
         },
         {
             id: 'O',
-            category: 'OUTILS DE VERSIONNING',
+            categoryKey: 'OUTILS DE VERSIONNING',
             skills: [
                 'GitHub',
                 'GitLab'
@@ -101,10 +135,10 @@ const TechnicalSkills = () => {
                     {/* Title and Description */}
                     <div className="flex-1 text-center">
                         <div className="inline-block mb-3 sm:mb-4 border border-black rounded-full px-6 sm:px-7 md:px-8 py-3 sm:py-3.5 md:py-4">
-                            <span className="text-base sm:text-lg md:text-xl font-bold tracking-wide">Compétences <span className="text-[#FF4D00]">Techniques</span></span>
+                            <span className="text-base sm:text-lg md:text-xl font-bold tracking-wide">{t.titlePrefix}<span className="text-[#FF4D00]">{t.titleSuffix}</span></span>
                         </div>
                         <p className="text-gray-600 text-sm sm:text-base md:text-lg">
-                            Mes armes pour construire des interfaces intuitives
+                            {t.description}
                         </p>
                     </div>
                 </div>
@@ -125,7 +159,7 @@ const TechnicalSkills = () => {
                                 </span>
                             </div>
                             <h3 className="font-bold text-lg sm:text-xl text-gray-900">
-                                {category.category}
+                                {t.categories[category.categoryKey]}
                             </h3>
                         </div>
 

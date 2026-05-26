@@ -8,8 +8,28 @@ import xdIcon from "../images/Xd.svg";
 import gsap from "gsap"; // Import GSAP if installed via npm
 import ScrollReveal from "scrollreveal";
 import cv from "../../public/cv.pdf";
+import { useLanguage } from "./LanguageContext";
+
+const translations = {
+  FR: {
+    passionate: "Développeur passionné\nCréateur de solutions innovantes",
+    designed: "Conçu pour transformer des idées en réalités digitales\navec expertise et créativité",
+    headline: <>Créer des expériences digitales <br className="hidden md:block" /> où technologie et innovation <br className="hidden md:block" /> façonnent l’avenir</>,
+    introParagraph: <>Développeur frontend et mobile maîtrisant des technologies modernes <br className="hidden md:block" /> pour concevoir des interfaces performantes et intuitives.</>,
+    downloadCv: "TÉLÉCHARGER MON CV",
+  },
+  EN: {
+    passionate: "Passionate Developer\nCreator of innovative solutions",
+    designed: "Designed to turn ideas into digital realities\nwith creativity and expertise",
+    headline: <>Creating digital experiences <br className="hidden md:block" /> where technology and innovation <br className="hidden md:block" /> shape the future</>,
+    introParagraph: <>Frontend and mobile developer mastering modern technologies <br className="hidden md:block" /> to design high-performance and intuitive interfaces.</>,
+    downloadCv: "DOWNLOAD MY CV",
+  }
+};
 
 const Competence = () => {
+  const { language } = useLanguage();
+  const t = translations[language];
   const buttonRef = useRef(null);
   const [hoveredSkill, setHoveredSkill] = useState(null);
 
@@ -216,13 +236,11 @@ const Competence = () => {
     <div className="px-4 md:px-16 bg-white pt-10 pb-4 md:py-16">
       {/* 1er section */}
       <div className="flex flex-col md:flex-row items-end md:items-center justify-end md:justify-between ">
-        <p className="text-sm sm:text-base text-gray-600 mb-2 md:mb-0 text-right md:text-left md:order-1 text-droite">
-          Développeur passionné <br />
-          Créateur de solutions innovantes
+        <p className="text-sm sm:text-base text-gray-600 mb-2 md:mb-0 text-right md:text-left md:order-1 text-droite whitespace-pre-line">
+          {t.passionate}
         </p>
-        <p className="text-sm sm:text-base text-gray-600 md:text-left hidden md:block text-gauche">
-          Conçu pour transformer des idées en réalités digitales <br />
-          avec expertise et créativité
+        <p className="text-sm sm:text-base text-gray-600 md:text-left hidden md:block text-gauche whitespace-pre-line">
+          {t.designed}
         </p>
       </div>
 
@@ -233,17 +251,13 @@ const Competence = () => {
           {/* text */}
           <div className="mb-6 md:mb-10">
             <h1 className="text-3xl md:text-5xl font-bold leading-tight [letter-spacing:-0.05em] text-left principal">
-              Créer des expériences digitales <br className="hidden md:block" />
-              où technologie et innovation <br className="hidden md:block" />
-              façonnent l’avenir
+              {t.headline}
             </h1>
           </div>
 
           {/* paragraphe */}
           <p className="text-sm sm:text-base text-gray-600 mb-8 md:mb-28 text-left text-gauche">
-            Développeur frontend et mobile maîtrisant des technologies modernes{" "}
-            <br className="hidden md:block" />
-            pour concevoir des interfaces performantes et intuitives.
+            {t.introParagraph}
           </p>
 
           {/* Photo - Mobile only */}
@@ -395,7 +409,7 @@ const Competence = () => {
               }}
             >
               <span className="button__flair"></span>
-              <span className="button__label">TÉLÉCHARGER MON CV</span>
+              <span className="button__label">{t.downloadCv}</span>
             </button>
           </div>
         </div>

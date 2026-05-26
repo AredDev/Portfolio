@@ -4,9 +4,46 @@ import { getDatabase, ref, onValue, runTransaction } from "firebase/database";
 import { FiGithub, FiFacebook } from "react-icons/fi";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import ScrollReveal from "scrollreveal";
+import { useLanguage } from "./LanguageContext";
+
+const translations = {
+  FR: {
+    home: "Accueil",
+    about: "À propos",
+    contact: "Contact",
+    slogan: (
+      <>
+        Développeur passionné, <br />
+        je transforme vos idées en solutions digitales <br />
+        modernes et <span className="text-orange">performantes.</span>
+      </>
+    ),
+    tagline1: "Créons ensemble des applications web",
+    tagline2: "qui allient performance et innovation.",
+    scheduleCall: "Planifier un appel",
+    scheduleCalendly: "Planifier dans Calendly",
+    visits: "Visites",
+  },
+  EN: {
+    home: "Home",
+    about: "About",
+    contact: "Contact",
+    slogan: (
+      <>
+        Passionate developer, <br />
+        I turn your ideas into digital solutions <br />
+        modern and <span className="text-orange">high-performing.</span>
+      </>
+    ),
+    tagline1: "Let's build web applications together",
+    tagline2: "that combine performance and innovation.",
+    scheduleCall: "Schedule a call",
+    scheduleCalendly: "Schedule on Calendly",
+    visits: "Visits",
+  }
+};
 
 // CONFIGURATION SÉCURISÉE VIA .env.local (VITE)
-// ... (omitted config for brevity in replace_file_content if possible, but I'll replace the block)
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -28,6 +65,8 @@ try {
 }
 
 const Footer = () => {
+  const { language } = useLanguage();
+  const t = translations[language];
   const [visits, setVisits] = useState("...");
   const location = useLocation();
   const navigate = useNavigate();
@@ -90,10 +129,10 @@ const Footer = () => {
             }}
             className="hover:text-orange-500 transition-colors text-xs sm:text-sm md:text-base"
           >
-            Accueil
+            {t.home}
           </Link>
           <Link to="/about" className="hover:text-orange-500 transition-colors text-xs sm:text-sm md:text-base">
-            À propos
+            {t.about}
           </Link>
           <a
             href="#contact"
@@ -103,7 +142,7 @@ const Footer = () => {
             }}
             className="hover:text-orange-500 transition-colors text-xs sm:text-sm md:text-base"
           >
-            Contact
+            {t.contact}
           </a>
         </nav>
       </div>
@@ -111,9 +150,7 @@ const Footer = () => {
       {/* Slogan */}
       <div className="mb-8 md:mb-28 footer-slogan">
         <h1 className="text-3xl lg:text-5xl font-bold leading-tight text-left md:text-center">
-          Développeur passionné, <br />
-          je transforme vos idées en solutions digitales <br />
-          modernes et <span className="text-orange">performantes.</span>
+          {t.slogan}
         </h1>
       </div>
 
@@ -142,15 +179,15 @@ const Footer = () => {
           className="inline-flex items-center gap-3 border border-orange-500 rounded-full px-6 py-3 hover:bg-orange-500 hover:text-white transition-colors duration-300 w-full bg-orange-500/10"
         >
           <span className="text-xl">•</span>
-          <span className="text-xs font-medium uppercase tracking-wider">Planifier un appel</span>
+          <span className="text-xs font-medium uppercase tracking-wider">{t.scheduleCall}</span>
         </a>
       </div>
 
       {/* Bottom Section */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 footer-contact">
         <div className="text-sm md:text-base text-gray-300">
-          <p>Créons ensemble des applications web</p>
-          <p>qui allient performance et innovation.</p>
+          <p>{t.tagline1}</p>
+          <p>{t.tagline2}</p>
         </div>
 
         <div className="hidden md:flex flex-row gap-4">
@@ -177,7 +214,7 @@ const Footer = () => {
             className="inline-flex items-center gap-3 border border-white rounded-full px-6 py-3 hover:bg-white hover:text-black transition-colors duration-300"
           >
             <span className="text-xl">•</span>
-            <span className="text-xs font-medium uppercase tracking-wider">Planifier dans Calendly</span>
+            <span className="text-xs font-medium uppercase tracking-wider">{t.scheduleCalendly}</span>
           </a>
         </div>
       </div>
@@ -208,7 +245,7 @@ const Footer = () => {
 
         {/* Compteur de visites */}
         <div className="text-xs md:text-sm text-gray-400 text-center md:text-left">
-          Visites : <span className="font-medium">{visits}</span>
+          {t.visits} : <span className="font-medium">{visits}</span>
         </div>
 
         {/* Copyright */}

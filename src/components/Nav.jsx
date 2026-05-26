@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLocation, Link } from 'react-router-dom';
 import { Home, User, Mail, MessageCircle } from 'lucide-react';
 import ContactModal from './ContactModal';
+import { useLanguage } from './LanguageContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -87,6 +88,7 @@ const NavItem = ({ text, to, href, index }) => {
 };
 
 const Navbar = () => {
+  const { language, toggleLanguage } = useLanguage();
   const location = useLocation();
   const cursorRef = useRef(null);
   const desktopNavRef = useRef(null);
@@ -275,9 +277,9 @@ const Navbar = () => {
         {/* Left: A propos OR Accueil */}
         <div ref={leftMenuRef}>
           {isHome ? (
-            <NavItem text="À propos" to="/about" index={0} />
+            <NavItem text={language === 'FR' ? 'À propos' : 'About'} to="/about" index={0} />
           ) : (
-            <NavItem text="Accueil" to="/" index={0} />
+            <NavItem text={language === 'FR' ? 'Accueil' : 'Home'} to="/" index={0} />
           )}
         </div>
 
@@ -360,6 +362,15 @@ const Navbar = () => {
           </a>
         </div>
       </nav>
+
+      {/* LANGUAGE SWITCHER BUTTON */}
+      <button
+        onClick={toggleLanguage}
+        className="fixed z-50 bottom-36 right-4 lg:bottom-24 lg:right-8 bg-black text-white border border-gray-800 w-14 h-14 rounded-full shadow-lg hover:scale-110 transition-transform active:scale-95 flex flex-col items-center justify-center font-bold text-xs cursor-pointer"
+      >
+        <span className="text-base leading-none mb-0.5">{language === 'FR' ? '🇬🇧' : '🇫🇷'}</span>
+        <span className="leading-none text-[10px]">{language === 'FR' ? 'EN' : 'FR'}</span>
+      </button>
 
       {/* FLOATING ACTION BUTTON (Messenger Style) */}
       <button

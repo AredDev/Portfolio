@@ -1,8 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import photo from '../images/eni.jpg';
-import profile from '../images/4.webp'
+import profile from '../images/4.webp';
+import { useLanguage } from './LanguageContext';
+
+const translations = {
+  FR: {
+    title: "PARCOURS ACADÉMIQUE",
+    institution: "ÉCOLE NATIONALE D'INFORMATIQUE",
+    degrees: [
+      'DEUXIÈME ANNÉE DE MASTER',
+      'PREMIÈRE ANNÉE DE MASTER',
+      'TROISIÈME ANNÉE DE LICENCE',
+      'DEUXIÈME ANNÉE DE LICENCE',
+      'PREMIÈRE ANNÉE DE LICENCE'
+    ]
+  },
+  EN: {
+    title: "ACADEMIC JOURNEY",
+    institution: "NATIONAL SCHOOL OF COMPUTER SCIENCE (ENI)",
+    degrees: [
+      "SECOND YEAR OF MASTER'S DEGREE",
+      "FIRST YEAR OF MASTER'S DEGREE",
+      "THIRD YEAR OF BACHELOR'S DEGREE",
+      "SECOND YEAR OF BACHELOR'S DEGREE",
+      "FIRST YEAR OF BACHELOR'S DEGREE"
+    ]
+  }
+};
 
 const AcademicJourney = () => {
+    const { language } = useLanguage();
+    const t = translations[language];
     const [scrollProgress, setScrollProgress] = useState(0);
 
     useEffect(() => {
@@ -28,33 +56,19 @@ const AcademicJourney = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const academicData = [
-        {
-            year: '2025 - 2026',
-            degree: 'DEUXIÈME ANNÉE DE MASTER',
-            institution: 'ÉCOLE NATIONALE D\'INFORMATIQUE'
-        },
-        {
-            year: '2024 - 2025',
-            degree: 'PREMIÈRE ANNÉE DE MASTER',
-            institution: 'ÉCOLE NATIONALE D\'INFORMATIQUE'
-        },
-        {
-            year: '2023 - 2024',
-            degree: 'TROISIÈME ANNÉE DE LICENCE',
-            institution: 'ÉCOLE NATIONALE D\'INFORMATIQUE'
-        },
-        {
-            year: '2022 - 2023',
-            degree: 'DEUXIÈME ANNÉE DE LICENCE',
-            institution: 'ÉCOLE NATIONALE D\'INFORMATIQUE'
-        },
-        {
-            year: '2021 - 2022',
-            degree: 'PREMIÈRE ANNÉE DE LICENCE',
-            institution: 'ÉCOLE NATIONALE D\'INFORMATIQUE'
-        }
+    const years = [
+        '2025 - 2026',
+        '2024 - 2025',
+        '2023 - 2024',
+        '2022 - 2023',
+        '2021 - 2022'
     ];
+
+    const academicData = years.map((year, index) => ({
+        year,
+        degree: t.degrees[index],
+        institution: t.institution
+    }));
 
     return (
         <>
@@ -64,7 +78,7 @@ const AcademicJourney = () => {
                 <div className="mb-8">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-white text-xs tracking-[0.1em] font-bold">
-                            PARCOURS ACADÉMIQUE
+                            {t.title}
                         </h2>
 
                         {/* Numéro avec style moderne */}
@@ -99,7 +113,7 @@ const AcademicJourney = () => {
                     {/* Badge institution */}
                     <div className="mt-6 inline-block">
                         <div className="bg-green-700 text-white px-6 py-3 rounded-full text-xs font-semibold">
-                            ÉCOLE NATIONALE D'INFORMATIQUE
+                            {t.institution}
                         </div>
                     </div>
                 </div>
@@ -108,7 +122,7 @@ const AcademicJourney = () => {
                 <div className="relative w-full h-64 rounded-2xl overflow-hidden mt-8">
                     <img
                         src={photo}
-                        alt="École Nationale"
+                        alt="School"
                         className="w-full h-full object-cover"
                     />
                     {/* Photo de profil superposée */}
@@ -135,7 +149,7 @@ const AcademicJourney = () => {
                     >
                         <img
                             src={photo}
-                            alt="École Nationale"
+                            alt="School"
                             className="absolute inset-0 w-full h-full object-cover"
                         />
 
@@ -174,7 +188,7 @@ const AcademicJourney = () => {
                             <div className="mb-8 md:mb-20">
                                 <div className="flex items-center justify-between">
                                     <h2 className="text-white text-xs md:text-lg tracking-[0.1em] font-bold">
-                                        PARCOURS ACADÉMIQUE
+                                        {t.title}
                                     </h2>
 
                                     {/* Numéro avec style moderne */}
@@ -222,7 +236,7 @@ const AcademicJourney = () => {
                                     }}
                                 >
                                     <div className="bg-green-700 text-white px-6 py-3 rounded-full text-xs md:text-sm font-semibold">
-                                        ÉCOLE NATIONALE D'INFORMATIQUE
+                                        {t.institution}
                                     </div>
                                 </div>
                             </div>
